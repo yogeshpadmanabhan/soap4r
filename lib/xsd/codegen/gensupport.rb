@@ -201,11 +201,13 @@ module GenSupport
 
   def safevarname(name)
     safename = uncapitalize(name.scan(/[a-zA-Z0-9_]+/).join('_'))
+=begin
     if /\A[a-z]/ !~ safename or keyword?(safename)
       "v_#{safename}"
     else
       safename
     end
+=end
   end
   module_function :safevarname
 

@@ -22,7 +22,7 @@ module ClassDefCreatorSupport
   include XSD::CodeGen::GenSupport
 
   def mapped_class_name(qname, modulepath)
-    @name_creator.assign_name(qname, modulepath)
+    @name_creator.assign_name(qname, modulepath).gsub("::", "")
   end
 
   def mapped_class_basename(qname, modulepath)
@@ -214,13 +214,13 @@ private
   end
 
   def name_element(element)
-    return element.name if element.name 
+    return element.name if element.name
     return element.ref if element.ref
     raise RuntimeError.new("cannot define name of #{element}")
   end
 
   def name_attribute(attribute)
-    return attribute.name if attribute.name 
+    return attribute.name if attribute.name
     return attribute.ref if attribute.ref
     raise RuntimeError.new("cannot define name of #{attribute}")
   end
