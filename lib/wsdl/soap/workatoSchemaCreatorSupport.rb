@@ -177,9 +177,11 @@ module WorkatoSchemaCreatorSupport
             sp + "array '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
           end
         elsif (enum = simple_enums[type]).present?
-          sp + "string '#{varname}', control_type: :select, pick_list: [#{enum}], optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          sp + "string '#{varname}', control_type: :select, pick_list: [#{enum}], optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}',\n" +
+            sp + "  **toggle('#{varname}', :string, control_type: 'text', optional: true, toggle_to_primary_hint: 'Select from list', toggle_to_secondary_hint: 'Enter custom value', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}')"
         elsif type == 'RecordRef' && opts[:action] == "input"
-          sp + "string '#{varname}', control_type: 'text', label: '#{varname.titleize} Id', optional: true, ns_ref: '#{type}_#{opts[:action]}', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          sp + "string '#{varname}', control_type: 'text', label: '#{varname.titleize} ID', optional: true, ns_ref: '#{type}_#{opts[:action]}', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}',\n" +
+            sp + "  **toggle('#{varname}_ext_id', :string, control_type: 'text', label: '#{varname.titleize} External ID', optional: true, toggle_to_primary_hint: 'Enter internal ID', toggle_to_secondary_hint: 'Enter external ID', ns_ref: '#{type}_#{opts[:action]}_ext_id', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}')"
         else
           (var[:dependents] ||= []) << "#{type}_#{opts[:action]}"
           sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
