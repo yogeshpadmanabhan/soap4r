@@ -140,6 +140,7 @@ module WorkatoSchemaCreatorSupport
       is_array = type.include?("[]")
       type.gsub!(/\[\]$/, "") if is_array
       nsm = namespace_mapping[namespace_contantize(ns)] || ""
+
       case type
       when "SOAP::SOAPString"
         if is_array
@@ -167,6 +168,14 @@ module WorkatoSchemaCreatorSupport
         end
       #when "RecordRef"
       #  sp + "string '#{varname}', control_type: 'text', netsuite_type: 'record_ref, ns_tag: '#{ns}'"
+      when "SearchBooleanField"
+        sp + "boolean '#{varname}', control_type: 'checkbox', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
+      when "SearchStringField", "SearchTextNumberField", "SearchEnumSelectField", "SearchMultiSelectField"
+        sp + "string '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
+      when "SearchLongField", "SearchDoubleField"
+        sp + "number '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
+      when "SearchDateField"
+        sp + "date_time '#{varname}', control_type: 'date_time', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
       else
         if is_array
           if (enum = simple_enums[type]).present?
@@ -184,7 +193,11 @@ module WorkatoSchemaCreatorSupport
             sp + "  **toggle('#{varname}_ext_id', :string, control_type: 'text', label: '#{varname.titleize} External ID', optional: true, toggle_to_primary_hint: 'Enter internal ID', toggle_to_secondary_hint: 'Enter external ID', ns_ref: '#{type}_#{opts[:action]}_ext_id', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}')"
         else
           (var[:dependents] ||= []) << "#{type}_#{opts[:action]}"
-          sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          if ["NullField", "CustomFieldList", "SOAP::SOAPBase64", "SearchCustomFieldList", "SearchColumnCustomFieldList"].include?(type)
+            sp + "# object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          else
+            sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          end
         end
       end
     end
