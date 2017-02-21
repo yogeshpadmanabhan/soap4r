@@ -170,7 +170,7 @@ module WorkatoSchemaCreatorSupport
       #  sp + "string '#{varname}', control_type: 'text', netsuite_type: 'record_ref, ns_tag: '#{ns}'"
       when "SearchBooleanField"
         sp + "boolean '#{varname}', control_type: 'checkbox', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
-      when "SearchStringField", "SearchTextNumberField", "SearchEnumSelectField", "SearchMultiSelectField"
+      when "SearchStringField", "SearchTextNumberField", "SearchMultiSelectField", "SearchEnumMultiSelectField"
         sp + "string '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
       when "SearchLongField", "SearchDoubleField"
         sp + "number '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
