@@ -168,11 +168,11 @@ module GenSupport
     safename = name.scan(/[a-zA-Z0-9_]+/).collect { |ele|
       GenSupport.capitalize(ele)
     }.join
-    if /\A[A-Z]/ !~ safename or keyword?(safename) or constant?(safename)
-      "C_#{safename}"
-    else
-      safename
-    end
+    # if /\A[A-Z]/ !~ safename or keyword?(safename) or constant?(safename)
+    #   "C_#{safename}"
+    # else
+    #   safename
+    # end
   end
   module_function :safeconstname
 

@@ -148,6 +148,12 @@ module WorkatoSchemaCreatorSupport
         else
           sp + "string '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
         end
+      when "SOAP::SOAPBase64"
+        if is_array
+          sp + "array '#{varname}', of: 'string', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+        else
+          sp + "string '#{varname}', label: 'Base64 encoded #{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+        end
       when "SOAP::SOAPBoolean"
         if is_array
           sp + "array '#{varname}', of: 'boolean', control_type: 'checkbox', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
