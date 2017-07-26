@@ -140,7 +140,9 @@ module WorkatoSchemaCreatorSupport
       is_array = type.include?("[]")
       type.gsub!(/\[\]$/, "") if is_array
       nsm = namespace_mapping[namespace_contantize(ns)] || ""
-
+      if var[:schema].gsub("::", "") == "RecordRef" && opts[:action] == "output" && %w(external_id type).include?(varname)
+        return ""
+      end
       case type
       when "SOAP::SOAPString"
         if is_array
@@ -152,7 +154,7 @@ module WorkatoSchemaCreatorSupport
         if is_array
           sp + "array '#{varname}', of: 'string', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
         else
-          sp + "string '#{varname}', label: 'Base64 encoded #{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+          sp + "string '#{varname}', label: 'Base64 encoded #{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', hint: 'Base64 encode file content'"
         end
       when "SOAP::SOAPBoolean"
         if is_array
@@ -174,13 +176,19 @@ module WorkatoSchemaCreatorSupport
         end
       #when "RecordRef"
       #  sp + "string '#{varname}', control_type: 'text', netsuite_type: 'record_ref, ns_tag: '#{ns}'"
-      when "SearchBooleanField"
+      when "SearchBooleanField", "SearchColumnBooleanField"
         sp + "boolean '#{varname}', control_type: 'checkbox', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
-      when "SearchStringField", "SearchTextNumberField", "SearchMultiSelectField", "SearchEnumMultiSelectField"
+      when "SearchStringField", "SearchTextNumberField", "SearchMultiSelectField", "SearchEnumMultiSelectField",
+           "SearchColumnStringField", "SearchColumnTextNumberField", "SearchColumnEnumSelectField", "SearchColumnSelectField"
         sp + "string '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
-      when "SearchLongField", "SearchDoubleField"
+      when "SearchLongField", "SearchDoubleField", "SearchColumnLongField", "SearchColumnDoubleField"
         sp + "number '#{varname}', control_type: 'text', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
       when "SearchDateField"
+        sp + "object '#{varname}', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}' do\n" +
+        sp + "  date_time 'from', control_type: 'date_time', optional: true\n" +
+        sp + "  date_time 'to', control_type: 'date_time', optional: true\n" +
+        sp + "end"
+      when "SearchColumnDateField"
         sp + "date_time '#{varname}', control_type: 'date_time', optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}', ns_search_type: '#{type}'"
       else
         if is_array
@@ -199,7 +207,7 @@ module WorkatoSchemaCreatorSupport
             sp + "  **toggle('#{varname}_ext_id', :string, control_type: 'text', label: '#{varname.titleize} External ID', optional: true, toggle_to_primary_hint: 'Enter internal ID', toggle_to_secondary_hint: 'Enter external ID', ns_ref: '#{type}_#{opts[:action]}_ext_id', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}')"
         else
           (var[:dependents] ||= []) << "#{type}_#{opts[:action]}"
-          if ["NullField", "CustomFieldList", "SOAP::SOAPBase64", "SearchCustomFieldList", "SearchColumnCustomFieldList"].include?(type)
+          if ["NullField", "CustomFieldList", "SearchCustomFieldList", "SearchColumnCustomFieldList"].include?(type)
             sp + "# object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
           else
             sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
@@ -213,7 +221,7 @@ module WorkatoSchemaCreatorSupport
     delimiter = "\n"
     schema_element.collect { |definition|
       dump_schema_element_definition(var, definition, opts)
-    }.join(delimiter)
+    }.compact.join(delimiter)
   end
 
   def dump_type(name, type)
@@ -318,7 +326,7 @@ module WorkatoSchemaCreatorSupport
     delimiter = "\n"
     schema_attribute.collect { |name, type|
       dump_schema_element_definition(var, [safevarname(name.to_s).underscore, name, ndq(type).gsub(/\"/, ""), "[0, 1]", name.namespace], opt.merge(indent: 2, ele_type: :attribute))
-    }.join(delimiter)
+    }.compact.join(delimiter)
 =begin
     "{\n    " +
       schema_attribute.collect { |name, type|
