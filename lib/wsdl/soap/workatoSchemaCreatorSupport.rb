@@ -211,7 +211,7 @@ module WorkatoSchemaCreatorSupport
           else
             (var[:dependents] ||= []) << "#{type}_#{opts[:action]}"
             #puts "DEPENDENTS :: #{var}" if varname == "customizationRef"
-            sp + "array '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+            sp + "array '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_ref_type: '#{type}', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
           end
         elsif (enum = simple_enums[type]).present?
           sp + "string '#{varname}', control_type: :select, pick_list: [#{enum}], optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}',\n" +
@@ -222,9 +222,9 @@ module WorkatoSchemaCreatorSupport
         else
           (var[:dependents] ||= []) << "#{type}_#{opts[:action]}"
           if ["NullField", "CustomFieldList", "SearchCustomFieldList", "SearchColumnCustomFieldList"].include?(type)
-            sp + "# object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+            sp + "# object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_ref_type: '#{type}', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
           else
-            sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
+            sp + "object '#{varname}', ref: :#{type}_#{opts[:action]}, optional: true, ns_ref_type: '#{type}', ns_content_type: '#{ele_type}', ns_tag: '#{nsm}'"
           end
         end
       end
