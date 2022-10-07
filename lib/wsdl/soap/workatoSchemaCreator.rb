@@ -18,11 +18,12 @@ module WSDL
 
       attr_reader :definitions
 
-      def initialize(definitions, name_creator, modulepath, defined_const)
+      def initialize(definitions, name_creator, modulepath, ns_version, defined_const)
         puts "INITIALIZE"
         @definitions = definitions
         @name_creator = name_creator
         @modulepath = modulepath
+        ns_version_const(ns_version)
         @simpletypes = definitions.collect_simpletypes
         @simpletypes.uniq!
         @complextypes = definitions.collect_complextypes
@@ -60,7 +61,7 @@ module WSDL
             #puts "TYPE:: #{type} :: #{type.compoundtype}"
             #unless type.abstract
               #puts "TYPES :: #{types} :: #{type} :: #{action}"
-              dump_str, dependents = dump_complextypedef(@modulepath, type.name, type, nil, :encoded => true, :action => action)
+              dump_str, dependents = dump_complextypedef(@modulepath, @ns_version, type.name, type, nil, :encoded => true, :action => action)
               types["#{mapped_class_name(type.name, '')}_#{action}"] = [dump_with_inner {
                 dump_str
               }, dependents, false]

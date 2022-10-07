@@ -19,8 +19,6 @@ module WorkatoSchemaCreatorSupport
   include ClassDefCreatorSupport
   include XSD::CodeGen
 
-  NS_VERSION = "2022_2"
-
   def dump_with_inner
     @dump_with_inner = []
     @dump_with_inner.unshift(yield)
@@ -35,7 +33,11 @@ module WorkatoSchemaCreatorSupport
     @namespace_const ||= HashWithIndifferentAccess.new
   end
 
-  def dump_complextypedef(mpath, qname, typedef, as_element = nil, opt = {})
+  def ns_version_const(version)
+    @ns_version_const = version
+  end
+
+  def dump_complextypedef(mpath, ns_version, qname, typedef, as_element = nil, opt = {})
     #puts "COMPTYPE :: #{typedef.compoundtype}" unless %w(TYPE_STRUCT TYPE_EMPTY TYPE_ARRAY TYPE_SIMPLE).include?(typedef.compoundtype.to_s)
     case typedef.compoundtype
     when :TYPE_STRUCT, :TYPE_EMPTY
@@ -102,44 +104,44 @@ module WorkatoSchemaCreatorSupport
 
   def namespace_mapping
     @namespace_mapping ||= {
-      "NsCore_#{NS_VERSION}PlatformWebservicesNetsuiteCom" => "platformCore",
-      "NsFaults_#{NS_VERSION}PlatformWebservicesNetsuiteCom" => "platformFaults",
-      "NsMessages_#{NS_VERSION}PlatformWebservicesNetsuiteCom" => "platformMessages",
-      "NsCommon_#{NS_VERSION}PlatformWebservicesNetsuiteCom" => "platformCommon",
-      "NsScheduling_#{NS_VERSION}ActivitiesWebservicesNetsuiteCom" => "activitiesScheduling",
-      "NsCommunication_#{NS_VERSION}GeneralWebservicesNetsuiteCom" => "generalCommunication",
-      "NsFilecabinet_#{NS_VERSION}DocumentsWebservicesNetsuiteCom" => "documentsFileCabinet",
-      "NsRelationships_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsRelationships",
-      "NsSupport_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsSupport",
-      "NsAccounting_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsAccounting",
-      "NsSales_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsSales",
-      "NsPurchases_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsPurchases",
-      "NsCustomers_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsCustomers",
-      "NsFinancial_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsFinancial",
-      "NsBank_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsBank",
-      "NsInventory_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsInventory",
-      "NsGeneral_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsGeneral",
-      "NsCustomization_#{NS_VERSION}SetupWebservicesNetsuiteCom" => "setupCustomization",
-      "NsEmployees_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsEmployees",
-      "NsWebsite_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsWebsite",
-      "NsEmployees_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsEmployees",
-      "NsMarketing_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsMarketing",
-      "NsDemandplanning_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsDemandPlanning",
-      "NsSupplychain_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsSupplyChain",
-      "NsAccountingTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsAccountingTypes",
-      "NsCommunicationTypes_#{NS_VERSION}GeneralWebservicesNetsuiteCom" => "generalCommunicationTypes",
-      "NsCustomizationTypes_#{NS_VERSION}SetupWebservicesNetsuiteCom" => "setupCustomizationTypes",
-      "NsDemandPlanningTypes_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsDemandplanningTypes",
-      "NsEmployeeTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsEmployeesTypes",
-      "NsFileCabinetTypes_#{NS_VERSION}DocumentsWebservicesNetsuiteCom" => "documentsFilecabinetTypes",
-      "NsInventoryTypes_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsInventoryTypes",
-      "NsMarketingTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsMarketingTypes",
-      "NsRelationshipTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsRelationshipsTypes",
-      "NsSaleTypes_#{NS_VERSION}TransactionsWebservicesNetsuiteCom" => "transactionsSalesTypes",
-      "NsSchedulingTypes_#{NS_VERSION}ActivitiesWebservicesNetsuiteCom" => "activitiesSchedulingTypes",
-      "NsSupplyChainTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsSupplychainTypes",
-      "NsSupportTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsSupportTypes",
-      "NsWebsiteTypes_#{NS_VERSION}ListsWebservicesNetsuiteCom" => "listsWebsiteTypes"
+      "NsCore_#{@ns_version_const}PlatformWebservicesNetsuiteCom" => "platformCore",
+      "NsFaults_#{@ns_version_const}PlatformWebservicesNetsuiteCom" => "platformFaults",
+      "NsMessages_#{@ns_version_const}PlatformWebservicesNetsuiteCom" => "platformMessages",
+      "NsCommon_#{@ns_version_const}PlatformWebservicesNetsuiteCom" => "platformCommon",
+      "NsScheduling_#{@ns_version_const}ActivitiesWebservicesNetsuiteCom" => "activitiesScheduling",
+      "NsCommunication_#{@ns_version_const}GeneralWebservicesNetsuiteCom" => "generalCommunication",
+      "NsFilecabinet_#{@ns_version_const}DocumentsWebservicesNetsuiteCom" => "documentsFileCabinet",
+      "NsRelationships_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsRelationships",
+      "NsSupport_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsSupport",
+      "NsAccounting_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsAccounting",
+      "NsSales_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsSales",
+      "NsPurchases_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsPurchases",
+      "NsCustomers_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsCustomers",
+      "NsFinancial_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsFinancial",
+      "NsBank_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsBank",
+      "NsInventory_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsInventory",
+      "NsGeneral_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsGeneral",
+      "NsCustomization_#{@ns_version_const}SetupWebservicesNetsuiteCom" => "setupCustomization",
+      "NsEmployees_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsEmployees",
+      "NsWebsite_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsWebsite",
+      "NsEmployees_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsEmployees",
+      "NsMarketing_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsMarketing",
+      "NsDemandplanning_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsDemandPlanning",
+      "NsSupplychain_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsSupplyChain",
+      "NsAccountingTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsAccountingTypes",
+      "NsCommunicationTypes_#{@ns_version_const}GeneralWebservicesNetsuiteCom" => "generalCommunicationTypes",
+      "NsCustomizationTypes_#{@ns_version_const}SetupWebservicesNetsuiteCom" => "setupCustomizationTypes",
+      "NsDemandPlanningTypes_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsDemandplanningTypes",
+      "NsEmployeeTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsEmployeesTypes",
+      "NsFileCabinetTypes_#{@ns_version_const}DocumentsWebservicesNetsuiteCom" => "documentsFilecabinetTypes",
+      "NsInventoryTypes_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsInventoryTypes",
+      "NsMarketingTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsMarketingTypes",
+      "NsRelationshipTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsRelationshipsTypes",
+      "NsSaleTypes_#{@ns_version_const}TransactionsWebservicesNetsuiteCom" => "transactionsSalesTypes",
+      "NsSchedulingTypes_#{@ns_version_const}ActivitiesWebservicesNetsuiteCom" => "activitiesSchedulingTypes",
+      "NsSupplyChainTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsSupplychainTypes",
+      "NsSupportTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsSupportTypes",
+      "NsWebsiteTypes_#{@ns_version_const}ListsWebservicesNetsuiteCom" => "listsWebsiteTypes"
     }
   end
 

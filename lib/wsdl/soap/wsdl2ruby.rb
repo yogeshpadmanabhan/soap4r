@@ -31,6 +31,7 @@ class WSDL2Ruby
   attr_reader :opt
   attr_accessor :logger
   attr_accessor :basedir
+  attr_accessor :ns_version
 
   def run
     unless @location
@@ -54,6 +55,7 @@ private
     @logger = Logger.new(STDERR)
     @basedir = nil
     @wsdl = nil
+    @ns_version = nil
     @name = nil
     @classdef_filename = nil
     @mr_filename = nil
