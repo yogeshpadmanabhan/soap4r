@@ -61,7 +61,7 @@ module WSDL
             #puts "TYPE:: #{type} :: #{type.compoundtype}"
             #unless type.abstract
               #puts "TYPES :: #{types} :: #{type} :: #{action}"
-              dump_str, dependents = dump_complextypedef(@modulepath, @ns_version, type.name, type, nil, :encoded => true, :action => action)
+              dump_str, dependents = dump_complextypedef(@modulepath, type.name, type, nil, :encoded => true, :action => action)
               types["#{mapped_class_name(type.name, '')}_#{action}"] = [dump_with_inner {
                 dump_str
               }, dependents, false]

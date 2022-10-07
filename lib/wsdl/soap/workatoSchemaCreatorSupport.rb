@@ -37,7 +37,7 @@ module WorkatoSchemaCreatorSupport
     @ns_version_const = version
   end
 
-  def dump_complextypedef(mpath, ns_version, qname, typedef, as_element = nil, opt = {})
+  def dump_complextypedef(mpath, qname, typedef, as_element = nil, opt = {})
     #puts "COMPTYPE :: #{typedef.compoundtype}" unless %w(TYPE_STRUCT TYPE_EMPTY TYPE_ARRAY TYPE_SIMPLE).include?(typedef.compoundtype.to_s)
     case typedef.compoundtype
     when :TYPE_STRUCT, :TYPE_EMPTY
